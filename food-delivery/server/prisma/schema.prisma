@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model MenuItem {
+  id           Int         @id @default(autoincrement())
+  name         String
+  description  String
+  price        Decimal     @db.Decimal(8, 2)
+  image_url    String
+  category     String
+  is_available Boolean     @default(true)
+  orderItems   OrderItem[]
+  createdAt    DateTime    @default(now())
+
+  @@map("menu_items")
+}
+
+model Order {
+  id            Int         @id @default(autoincrement())
+  customer_name String
+  address       String
+  phone         String
+  status        OrderStatus @default(received)
+  total_amount  Decimal     @db.Decimal(10, 2)
+  orderItems    OrderItem[]
+  createdAt     DateTime    @default(now())
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id           Int      @id @default(autoincrement())
+  order        Order    @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  order_id     Int
+  menuItem     MenuItem @relation(fields: [menu_item_id], references: [id])
+  menu_item_id Int
+  quantity     Int
+  unit_price   Decimal  @db.Decimal(8, 2)
+
+  @@map("order_items")
+}
+
+enum OrderStatus {
+  received
+  preparing
+  out_for_delivery
+  delivered
+  cancelled
+}

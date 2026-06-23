@@ -1,0 +1,122 @@
+# ============================================
+# DEPENDENCIES & NODE MODULES
+# ============================================
+node_modules/
+*/node_modules/
+client/node_modules/
+server/node_modules/
+yarn.lock
+package-lock.json
+pnpm-lock.yaml
+*/package-lock.json
+
+# ============================================
+# ENVIRONMENT VARIABLES
+# ============================================
+.env
+.env.local
+.env.*.local
+.env.production.local
+.env.development.local
+.env.test.local
+client/.env
+server/.env
+
+# ============================================
+# BUILD & DIST OUTPUTS
+# ============================================
+dist/
+build/
+client/dist/
+server/dist/
+*.tsbuildinfo
+
+# ============================================
+# VITE & DEVELOPMENT TOOLS
+# ============================================
+.vite/
+client/.vite/
+server/.vite/
+
+# ============================================
+# LOGS & DEBUG FILES
+# ============================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.log/
+
+# ============================================
+# IDE & EDITOR FILES
+# ============================================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+*.sublime-workspace
+*.sublime-project
+.vscode-test/
+
+# ============================================
+# PRISMA DATABASE
+# ============================================
+server/prisma/dev.db
+server/prisma/dev.db-journal
+server/prisma/*.db
+server/prisma/*.db-*
+
+# ============================================
+# TESTING & COVERAGE
+# ============================================
+coverage/
+.nyc_output/
+*.lcov
+client/coverage/
+server/coverage/
+test-results/
+
+# ============================================
+# OS & SYSTEM FILES
+# ============================================
+.DS_Store
+.AppleDouble
+.LSOverride
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+desktop.ini
+$RECYCLE.BIN/
+ehthumbs.db
+
+# ============================================
+# TEMPORARY & CACHE FILES
+# ============================================
+*.tmp
+*.temp
+.cache/
+client/.cache/
+server/.cache/
+tmp/
+temp/
+
+# ============================================
+# PRODUCTION
+# ============================================
+.next/
+out/
+
+# ============================================
+# OPTIONAL NPM CACHE
+# ============================================
+.npm
+.eslintcache
+.node_repl_history
+*.tgz
