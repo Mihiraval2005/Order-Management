@@ -1,22 +1,18 @@
-const express = require("express");
-const router = express.Router();
-const { placeOrder, getOrder, getOrders, updateStatus, cancelOrder } = require("../controllers/order.controller");
-const validate = require("../middleware/validate");
-const { createOrderSchema, updateStatusSchema } = require("../schemas/order.schema");
+import express from "express";
+import { placeOrder, getOrder, getOrders, updateStatus, cancelOrder } from "../controllers/order.controller.js";
+import validate from "../middleware/validate.js";
+import { createOrderSchema, updateStatusSchema } from "../schemas/order.schema.js";
 
-// POST /api/orders
+const router = express.Router();
+
 router.post("/", validate(createOrderSchema), placeOrder);
 
-// GET /api/orders
 router.get("/", getOrders);
 
-// GET /api/orders/:id
 router.get("/:id", getOrder);
 
-// PATCH /api/orders/:id/status
 router.patch("/:id/status", validate(updateStatusSchema), updateStatus);
 
-// DELETE /api/orders/:id  (cancel)
 router.delete("/:id", cancelOrder);
 
-module.exports = router;
+export default router;

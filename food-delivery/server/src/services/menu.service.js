@@ -1,4 +1,4 @@
-const prisma = require("../config/db");
+import prisma from "../config/db.js";
 
 const getAllMenuItems = async () => {
   return prisma.menuItem.findMany({
@@ -17,4 +17,5 @@ const getMenuItemById = async (id) => {
   return item;
 };
 
-module.exports = { getAllMenuItems, getMenuItemById };
+export { getAllMenuItems, getMenuItemById };
+export default { getAllMenuItems, getMenuItemById };

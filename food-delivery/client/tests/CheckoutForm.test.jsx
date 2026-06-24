@@ -4,7 +4,6 @@ import CheckoutForm from "../src/components/Checkout/CheckoutForm";
 import { CartProvider } from "../src/context/CartContext";
 import { BrowserRouter } from "react-router-dom";
 
-// Mock API and toast
 vi.mock("../src/services/api", () => ({
   placeOrder: vi.fn().mockResolvedValue({ data: { id: 1 } }),
 }));

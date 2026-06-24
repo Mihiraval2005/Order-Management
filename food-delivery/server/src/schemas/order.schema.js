@@ -1,4 +1,4 @@
-const { z } = require("zod");
+import { z } from "zod";
 
 const orderItemSchema = z.object({
   menu_item_id: z.number().int().positive("menu_item_id must be a positive integer"),
@@ -32,4 +32,4 @@ const updateStatusSchema = z.object({
   ),
 });
 
-module.exports = { createOrderSchema, updateStatusSchema };
+export { createOrderSchema, updateStatusSchema };

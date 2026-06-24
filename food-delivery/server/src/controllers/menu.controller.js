@@ -1,4 +1,4 @@
-const menuService = require("../services/menu.service");
+import menuService from "../services/menu.service.js";
 
 const getMenu = async (req, res, next) => {
   try {
@@ -20,4 +20,4 @@ const getMenuItem = async (req, res, next) => {
   }
 };
 
-module.exports = { getMenu, getMenuItem };
+export { getMenu, getMenuItem };

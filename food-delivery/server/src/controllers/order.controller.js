@@ -1,12 +1,10 @@
-const orderService = require("../services/order.service");
-const { simulateOrderProgress } = require("../services/statusSimulator.service");
+import orderService from "../services/order.service.js";
+import { simulateOrderProgress } from "../services/statusSimulator.service.js";
 
-// io is injected via req.app.get('io')
 const placeOrder = async (req, res, next) => {
   try {
     const order = await orderService.createOrder(req.validatedData);
     const io = req.app.get("io");
-    // Start real-time status simulation
     simulateOrderProgress(order.id, io);
     res.status(201).json({ success: true, message: "Order placed successfully", data: order });
   } catch (err) {
@@ -41,9 +39,10 @@ const updateStatus = async (req, res, next) => {
     const { status } = req.validatedData;
     const updated = await orderService.updateOrderStatus(id, status);
 
-    // Also emit socket event for manual status updates
     const io = req.app.get("io");
-    io.to(`order_${id}`).emit("order_status_update", { orderId: id, status });
+    if (io?.to) {
+      io.to(`order_${id}`).emit("order_status_update", { orderId: id, status });
+    }
 
     res.json({ success: true, message: "Status updated", data: updated });
   } catch (err) {
@@ -62,4 +61,4 @@ const cancelOrder = async (req, res, next) => {
   }
 };
 
-module.exports = { placeOrder, getOrder, getOrders, updateStatus, cancelOrder };
+export { placeOrder, getOrder, getOrders, updateStatus, cancelOrder };

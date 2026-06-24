@@ -23,7 +23,6 @@ const MenuList = () => {
 
   return (
     <div>
-      {/* Category filter */}
       <div className="category-tabs">
         {categories.map((cat) => (
           <button
@@ -36,7 +35,6 @@ const MenuList = () => {
         ))}
       </div>
 
-      {/* Menu grid */}
       <div className="menu-grid">
         {filtered.map((item) => (
           <MenuCard key={item.id} item={item} />

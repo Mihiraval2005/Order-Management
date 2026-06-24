@@ -1,5 +1,5 @@
-const request = require("supertest");
-const app = require("../src/app");
+import request from "supertest";
+import app from "../src/app.js";
 
 const validOrder = {
   customer_name: "Mihir Shah",
@@ -11,7 +11,6 @@ const validOrder = {
 describe("Order API", () => {
   let createdOrderId;
 
-  // ─── POST /api/orders ───────────────────────────────
   describe("POST /api/orders", () => {
     it("should create a new order with valid data", async () => {
       const res = await request(app).post("/api/orders").send(validOrder);
@@ -57,7 +56,6 @@ describe("Order API", () => {
     });
   });
 
-  // ─── GET /api/orders ────────────────────────────────
   describe("GET /api/orders", () => {
     it("should return a list of all orders", async () => {
       const res = await request(app).get("/api/orders");
@@ -67,7 +65,6 @@ describe("Order API", () => {
     });
   });
 
-  // ─── GET /api/orders/:id ────────────────────────────
   describe("GET /api/orders/:id", () => {
     it("should return a single order by id", async () => {
       const res = await request(app).get(`/api/orders/${createdOrderId}`);
@@ -82,7 +79,6 @@ describe("Order API", () => {
     });
   });
 
-  // ─── PATCH /api/orders/:id/status ──────────────────
   describe("PATCH /api/orders/:id/status", () => {
     it("should update order status to 'preparing'", async () => {
       const res = await request(app)
@@ -107,10 +103,8 @@ describe("Order API", () => {
     });
   });
 
-  // ─── DELETE /api/orders/:id ─────────────────────────
   describe("DELETE /api/orders/:id", () => {
     it("should cancel an order in 'received' status", async () => {
-      // Create a fresh order to cancel
       const orderRes = await request(app).post("/api/orders").send(validOrder);
       const newId = orderRes.body.data.id;
       const res = await request(app).delete(`/api/orders/${newId}`);
@@ -119,7 +113,6 @@ describe("Order API", () => {
     });
 
     it("should return 400 when cancelling a non-received order", async () => {
-      // createdOrderId is now 'preparing' from previous test
       const res = await request(app).delete(`/api/orders/${createdOrderId}`);
       expect(res.status).toBe(400);
     });

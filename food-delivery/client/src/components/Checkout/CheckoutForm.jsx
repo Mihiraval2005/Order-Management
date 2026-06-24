@@ -103,7 +103,6 @@ const CheckoutForm = () => {
         </form>
       </div>
 
-      {/* Order summary sidebar */}
       <div className="checkout__summary">
         <h3>Order Summary</h3>
         {cart.map((item) => (

@@ -1,18 +1,10 @@
-const { updateOrderStatus } = require("./order.service");
+import { updateOrderStatus } from "./order.service.js";
 
 const STATUS_SEQUENCE = ["received", "preparing", "out_for_delivery", "delivered"];
-// Delays in milliseconds between each status transition
-const DELAYS = [10000, 20000, 30000]; // 10s → 20s → 30s
+const DELAYS = [10000, 20000, 30000];
 
-/**
- * Automatically advances an order through all statuses and emits socket events.
- * Called after a new order is placed.
- *
- * @param {number} orderId
- * @param {object} io - Socket.io server instance
- */
 const simulateOrderProgress = (orderId, io) => {
-  let stepIndex = 1; // start from 'preparing' (order starts as 'received')
+  let stepIndex = 1;
 
   const advance = async () => {
     if (stepIndex >= STATUS_SEQUENCE.length) return;
@@ -23,12 +15,13 @@ const simulateOrderProgress = (orderId, io) => {
       const updated = await updateOrderStatus(orderId, newStatus);
       console.log(`🚀 Order #${orderId} → ${newStatus}`);
 
-      // Emit to all clients in the order's room
-      io.to(`order_${orderId}`).emit("order_status_update", {
-        orderId,
-        status: newStatus,
-        updatedAt: updated.createdAt,
-      });
+      if (io?.to) {
+        io.to(`order_${orderId}`).emit("order_status_update", {
+          orderId,
+          status: newStatus,
+          updatedAt: updated.createdAt,
+        });
+      }
 
       stepIndex++;
       if (stepIndex < STATUS_SEQUENCE.length) {
@@ -39,8 +32,7 @@ const simulateOrderProgress = (orderId, io) => {
     }
   };
 
-  // Start the chain after first delay
   setTimeout(advance, DELAYS[0]);
 };
 
-module.exports = { simulateOrderProgress };
+export { simulateOrderProgress };

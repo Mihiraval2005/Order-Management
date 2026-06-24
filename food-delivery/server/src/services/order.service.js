@@ -1,14 +1,10 @@
-const prisma = require("../config/db");
+import prisma from "../config/db.js";
 
-/**
- * Create a new order.
- * Validates that all menu_item_ids exist, calculates total, creates order + items in one transaction.
- */
 const createOrder = async ({ customer_name, address, phone, items }) => {
-  // Fetch all menu items in one query
-  const menuItemIds = items.map((i) => i.menu_item_id);
+  const menuItemIds = [...new Set(items.map((i) => i.menu_item_id))];
   const menuItems = await prisma.menuItem.findMany({
     where: { id: { in: menuItemIds }, is_available: true },
+    select: { id: true, price: true },
   });
 
   if (menuItems.length !== menuItemIds.length) {
@@ -17,18 +13,14 @@ const createOrder = async ({ customer_name, address, phone, items }) => {
     throw err;
   }
 
-  // Build a lookup map for prices
-  const priceMap = {};
-  menuItems.forEach((m) => { priceMap[m.id] = parseFloat(m.price); });
+  const priceMap = Object.fromEntries(menuItems.map((m) => [m.id, parseFloat(m.price)]));
 
-  // Calculate total
   const total_amount = items.reduce((sum, item) => {
     return sum + priceMap[item.menu_item_id] * item.quantity;
   }, 0);
 
-  // Create order + items in a transaction
-  const order = await prisma.$transaction(async (tx) => {
-    const newOrder = await tx.order.create({
+  return prisma.$transaction(async (tx) => {
+    return tx.order.create({
       data: {
         customer_name,
         address,
@@ -42,19 +34,27 @@ const createOrder = async ({ customer_name, address, phone, items }) => {
           })),
         },
       },
-      include: {
-        orderItems: { include: { menuItem: true } },
+      select: {
+        id: true,
+        customer_name: true,
+        address: true,
+        phone: true,
+        status: true,
+        total_amount: true,
+        createdAt: true,
+        orderItems: {
+          select: {
+            id: true,
+            menu_item_id: true,
+            quantity: true,
+            unit_price: true,
+          },
+        },
       },
     });
-    return newOrder;
   });
-
-  return order;
 };
 
-/**
- * Get a single order with its items.
- */
 const getOrderById = async (id) => {
   const order = await prisma.order.findUnique({
     where: { id },
@@ -72,9 +72,6 @@ const getOrderById = async (id) => {
   return order;
 };
 
-/**
- * Get all orders (most recent first).
- */
 const getAllOrders = async () => {
   return prisma.order.findMany({
     orderBy: { createdAt: "desc" },
@@ -82,9 +79,6 @@ const getAllOrders = async () => {
   });
 };
 
-/**
- * Update an order's status.
- */
 const updateOrderStatus = async (id, status) => {
   const order = await prisma.order.findUnique({ where: { id } });
   if (!order) {
@@ -100,9 +94,6 @@ const updateOrderStatus = async (id, status) => {
   return prisma.order.update({ where: { id }, data: { status } });
 };
 
-/**
- * Cancel an order (only if still in 'received' status).
- */
 const cancelOrder = async (id) => {
   const order = await prisma.order.findUnique({ where: { id } });
   if (!order) {
@@ -118,4 +109,5 @@ const cancelOrder = async (id) => {
   return prisma.order.update({ where: { id }, data: { status: "cancelled" } });
 };
 
-module.exports = { createOrder, getOrderById, getAllOrders, updateOrderStatus, cancelOrder };
+export { createOrder, getOrderById, getAllOrders, updateOrderStatus, cancelOrder };
+export default { createOrder, getOrderById, getAllOrders, updateOrderStatus, cancelOrder };

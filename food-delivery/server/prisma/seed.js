@@ -1,8 +1,8 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+import prisma from "../src/config/db.js";
 
 const menuItems = [
   {
+    id: 1,
     name: "Margherita Pizza",
     description: "Classic tomato sauce, fresh mozzarella, basil leaves on a crispy crust",
     price: 12.99,
@@ -10,6 +10,7 @@ const menuItems = [
     category: "Pizza",
   },
   {
+    id: 2,
     name: "Pepperoni Pizza",
     description: "Loaded with premium pepperoni slices, mozzarella and tomato sauce",
     price: 14.99,
@@ -17,6 +18,7 @@ const menuItems = [
     category: "Pizza",
   },
   {
+    id: 3,
     name: "Classic Cheeseburger",
     description: "Juicy beef patty, cheddar cheese, lettuce, tomato, pickles and special sauce",
     price: 9.99,
@@ -24,6 +26,7 @@ const menuItems = [
     category: "Burger",
   },
   {
+    id: 4,
     name: "BBQ Bacon Burger",
     description: "Double beef patty with crispy bacon, BBQ sauce, onion rings and coleslaw",
     price: 13.49,
@@ -31,6 +34,7 @@ const menuItems = [
     category: "Burger",
   },
   {
+    id: 5,
     name: "Chicken Tikka Masala",
     description: "Tender chicken in a rich, creamy tomato-based curry sauce with aromatic spices",
     price: 11.99,
@@ -38,6 +42,7 @@ const menuItems = [
     category: "Curry",
   },
   {
+    id: 6,
     name: "Paneer Butter Masala",
     description: "Soft paneer cubes in a velvety butter and tomato gravy, served with naan",
     price: 10.99,
@@ -45,6 +50,7 @@ const menuItems = [
     category: "Curry",
   },
   {
+    id: 7,
     name: "Caesar Salad",
     description: "Crisp romaine lettuce, parmesan shavings, croutons with classic Caesar dressing",
     price: 7.99,
@@ -52,6 +58,7 @@ const menuItems = [
     category: "Salad",
   },
   {
+    id: 8,
     name: "Chocolate Lava Cake",
     description: "Warm chocolate cake with a gooey molten centre, served with vanilla ice cream",
     price: 5.99,
@@ -63,15 +70,15 @@ const menuItems = [
 async function main() {
   console.log("🌱 Seeding database...");
 
-  // Clear existing data
   await prisma.orderItem.deleteMany();
   await prisma.order.deleteMany();
   await prisma.menuItem.deleteMany();
 
-  // Insert menu items
   for (const item of menuItems) {
     await prisma.menuItem.create({ data: item });
   }
+
+  await prisma.$executeRawUnsafe('SELECT setval(pg_get_serial_sequence(\'"menu_items"\', \'id\'), (SELECT MAX(id) FROM "menu_items"))');
 
   console.log(`✅ Seeded ${menuItems.length} menu items`);
 }

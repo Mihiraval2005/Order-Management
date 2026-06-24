@@ -1,14 +1,15 @@
-require("dotenv").config();
-const http = require("http");
-const { Server } = require("socket.io");
-const app = require("./src/app");
-const { registerOrderSockets } = require("./src/sockets/orderSocket");
+import dotenv from "dotenv";
+import http from "http";
+import { Server } from "socket.io";
+import app from "./src/app.js";
+import { registerOrderSockets } from "./src/sockets/orderSocket.js";
+
+dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 
 const httpServer = http.createServer(app);
 
-// Attach Socket.io to the HTTP server
 const io = new Server(httpServer, {
   cors: {
     origin: process.env.CLIENT_URL || "http://localhost:5173",
@@ -16,10 +17,8 @@ const io = new Server(httpServer, {
   },
 });
 
-// Make io accessible in controllers via req.app.get('io')
 app.set("io", io);
 
-// Register socket handlers
 registerOrderSockets(io);
 
 httpServer.listen(PORT, () => {

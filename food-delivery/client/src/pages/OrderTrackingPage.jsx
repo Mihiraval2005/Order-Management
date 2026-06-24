@@ -11,7 +11,6 @@ const OrderTrackingPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Real-time status from socket
   const { status, connected } = useOrderSocket(
     order ? parseInt(id) : null,
     order?.status

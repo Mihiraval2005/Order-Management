@@ -1,7 +1,6 @@
 const errorHandler = (err, req, res, next) => {
   console.error("❌ Error:", err.message);
 
-  // Prisma known errors
   if (err.code === "P2025") {
     return res.status(404).json({ success: false, message: "Record not found" });
   }
@@ -16,4 +15,4 @@ const errorHandler = (err, req, res, next) => {
   });
 };
 
-module.exports = errorHandler;
+export default errorHandler;

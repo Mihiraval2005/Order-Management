@@ -24,7 +24,6 @@ const MenuPage = () => {
           <MenuList />
         </div>
 
-        {/* Sticky cart panel */}
         <aside className={`cart-panel ${cartOpen ? "cart-panel--open" : ""}`}>
           <Cart onClose={() => setCartOpen(false)} />
         </aside>
